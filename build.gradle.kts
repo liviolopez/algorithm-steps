@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:${Versions.gradle}")
         classpath(kotlin("gradle-plugin", version = Versions.kotlin))
-        classpath(Dep.get("Navigation","gradle","plugin"))
+        classpath(Dep.plugin("Navigation"))
     }
 }
 
