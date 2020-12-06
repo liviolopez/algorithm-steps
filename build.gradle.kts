@@ -4,8 +4,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:${Versions.gradle}")
-        classpath(kotlin("gradle-plugin", version = Versions.kotlin))
+        classpath(Dep.plugin("Kotlin"))
+        classpath(Dep.plugin("Gradle"))
         classpath(Dep.plugin("Navigation"))
     }
 }

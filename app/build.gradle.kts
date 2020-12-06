@@ -54,8 +54,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.0.0-alpha08"
-        kotlinCompilerVersion = Versions.kotlin
+        kotlinCompilerExtensionVersion = Dep.compose
+        kotlinCompilerVersion = Dep.kotlin
     }
 }
 

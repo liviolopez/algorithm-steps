@@ -1,30 +1,24 @@
 object Sdk {
     const val compile = 30
     const val target = 30
-    const val min = 22
+    const val min = 23
 
     const val buildTool = "30.0.2"
     const val ndk = "22.0.6917172 rc1"
 }
 
-object Versions {
-    const val kotlin = "1.4.20"
-    const val gradle = "7.0.0-alpha02"
-}
-
 object Dep {
-    val libs = mutableMapOf<String, MutableMap<String, MutableList<String>>>()
-    fun plugin(group:String):String = (libs[group] ?: error(""))[gradle]!!.first()
+    private val libs = mutableMapOf<String, MutableMap<String, MutableList<String>>>()
+    fun plugin(group:String):String = (libs[group] ?: error(""))[plugin]!!.first()
 
     fun allLibs(excludeGroup: List<String> = emptyList()): MutableList<Pair<String, String>> {
         val allLibs = mutableListOf<Pair<String, String>>()
 
         libs.filter { !excludeGroup.contains(it.key) }.forEach { d ->
-            d.value.filter { it.key != "gradle" }.forEach { (type, libs) ->
+            d.value.filter { it.key != "plugin" }.forEach { (type, libs) ->
                 libs.forEach { lib ->
                     allLibs.add(Pair(type, lib))
-
-                    println("${if(type == "impl") "implementation" else "kapt"}(\"${lib}\")")
+                    //println("${if(type == "impl") "implementation" else "kapt"}(\"${lib}\")")
                 }
             }
         }
@@ -32,14 +26,26 @@ object Dep {
         return allLibs
     }
 
-    private const val gradle = "gradle"
+    private const val plugin = "plugin"
     private const val impl = "impl"
     private const val kapt = "kapt"
 
+    const val kotlin = "1.4.20"
+    const val compose = "1.0.0-alpha08"
+
     init {
         libs["Kotlin"] = hashMapOf(
+            plugin to mutableListOf(
+            "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin}"),
+
             impl to mutableListOf(
-            "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}")
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin}")
+        )
+
+        val gradle = "7.0.0-alpha02"
+        libs["Gradle"] = hashMapOf(
+            plugin to mutableListOf(
+            "com.android.tools.build:gradle:${gradle}")
         )
 
         libs["Basic"] = hashMapOf(
@@ -55,7 +61,7 @@ object Dep {
 
         val navigation = "2.3.2"
         libs["Navigation"] = hashMapOf(
-            gradle to mutableListOf(
+            plugin to mutableListOf(
             "androidx.navigation:navigation-safe-args-gradle-plugin:${navigation}"),
 
             impl to mutableListOf(
@@ -63,7 +69,6 @@ object Dep {
             "androidx.navigation:navigation-ui-ktx:${navigation}")
         )
 
-        val compose = "1.0.0-alpha08"
         libs["Compose"] = hashMapOf(
             impl to mutableListOf(
             "androidx.compose.ui:ui:${compose}",
