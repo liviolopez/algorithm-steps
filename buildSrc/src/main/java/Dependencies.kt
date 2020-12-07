@@ -31,7 +31,8 @@ object Dep {
     private const val kapt = "kapt"
 
     const val kotlin = "1.4.20"
-    const val compose = "1.0.0-alpha08"
+    const val compose_snap = "1.0.0-SNAPSHOT"
+    const val compose_alpha = "1.0.0-alpha08"
 
     init {
         libs["Kotlin"] = hashMapOf(
@@ -51,11 +52,14 @@ object Dep {
         libs["Basic"] = hashMapOf(
             impl to mutableListOf(
             "com.google.code.gson:gson:2.8.6",
+            "com.google.android.material:material:1.2.1",
+
+            // AndroidX
             "androidx.core:core-ktx:1.5.0-alpha05",
             "androidx.appcompat:appcompat:1.3.0-alpha02",
             "androidx.constraintlayout:constraintlayout:2.0.4",
             "androidx.legacy:legacy-support-v4:1.0.0",
-            "com.google.android.material:material:1.2.1",
+            "androidx.activity:activity-ktx:1.2.0-beta02",
             "androidx.ui:ui-tooling:1.0.0-alpha07")
         )
 
@@ -66,25 +70,28 @@ object Dep {
 
             impl to mutableListOf(
             "androidx.navigation:navigation-fragment-ktx:${navigation}",
-            "androidx.navigation:navigation-ui-ktx:${navigation}")
+            "androidx.navigation:navigation-ui-ktx:${navigation}",
+
+            // Navigation Compose
+            "androidx.navigation:navigation-compose:1.0.0-alpha03")
         )
 
         libs["Compose"] = hashMapOf(
             impl to mutableListOf(
-            "androidx.compose.ui:ui:${compose}",
-            "androidx.compose.animation:animation:${compose}",
-            "androidx.compose.ui:ui-tooling:${compose}",
+            "androidx.compose.ui:ui:${compose_snap}",
+            "androidx.compose.animation:animation:${compose_alpha}",
+            "androidx.compose.ui:ui-tooling:${compose_alpha}",
 
-            "androidx.compose.foundation:foundation:${compose}",
-            "androidx.compose.foundation:foundation-layout:${compose}",
+            "androidx.compose.foundation:foundation:${compose_alpha}",
+            "androidx.compose.foundation:foundation-layout:${compose_snap}",
 
-            "androidx.compose.material:material:${compose}",
-            "androidx.compose.material:material-icons-core:${compose}",
-            "androidx.compose.material:material-icons-extended:${compose}",
+            "androidx.compose.material:material:${compose_alpha}",
+            "androidx.compose.material:material-icons-core:${compose_snap}",
+            "androidx.compose.material:material-icons-extended:1.0.0-alpha08",
 
-            "androidx.compose.runtime:runtime:${compose}",
-            "androidx.compose.runtime:runtime-livedata:${compose}",
-            "androidx.compose.runtime:runtime-rxjava3:${compose}")
+            "androidx.compose.runtime:runtime:${compose_snap}",
+            "androidx.compose.runtime:runtime-livedata:${compose_alpha}",
+            "androidx.compose.runtime:runtime-rxjava3:1.0.0-alpha08")
         )
     }
 
