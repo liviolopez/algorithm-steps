@@ -1,4 +1,4 @@
-package dev.all4.algorithmSteps.ui
+package dev.all4.algorithmSteps.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
