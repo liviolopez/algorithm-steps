@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Algorithm Steps</string>
+
+    <!-- Navigation Bottom -->
+    <string name="algorithms">Algorithms</string>
+    <string name="config">Config</string>
 </resources>
