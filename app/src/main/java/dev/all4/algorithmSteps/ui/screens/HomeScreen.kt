@@ -1,249 +1,185 @@
 package dev.all4.algorithmSteps.ui.screens
 
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.ScrollableRow
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import dev.all4.algorithmSteps.others.TreeNode
-import dev.all4.algorithmSteps.others.parseTree
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import dev.all4.algorithmSteps.others.algorithms.BinaryTree
+import dev.all4.algorithmSteps.others.algorithms.resources.*
 import dev.all4.algorithmSteps.utils._log
 import dev.all4.algorithmSteps.utils._logline
+import dev.all4.algorithmSteps.utils._output
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Created by Livio Lopez on 12/6/20.
  */
 @Composable
+fun Spacer(){
+    Spacer(modifier = Modifier.padding(3.dp))
+}
+
+@Composable
 fun HomeScreen() {
-    Surface(color = MaterialTheme.colors.background) {
-        ScrollableColumn(
-                modifier = Modifier
-                        .wrapContentWidth()
-                        .fillMaxHeight()
-        ) {
-            Text(text = "Hello I am in Home")
+    Surface(color = MaterialTheme.colors.background, modifier = Modifier.padding(bottom = 50.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(16.dp)) {
+            Text(text = "Algorithms", style = TextStyle(fontSize = TextUnit.Sp(18), fontWeight = FontWeight.Bold))
 
-            ScrollableRow(
-                    modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-            ) {
-//                val treeNodeInt = TreeNode(1)
-//                        treeNodeInt.left = TreeNode(5)
-//                                .apply { left = TreeNode(2); right = TreeNode(6);  }
-//                        treeNodeInt.right = TreeNode(4)
-//                treeNodeInt._log()
+            Spacer(modifier = Modifier.padding(8.dp))
 
-                val treeNodeInt = TreeNode(1)
-                treeNodeInt.right = TreeNode(2)
-                        .apply { left = TreeNode(3);  }
-                treeNodeInt._log()
+            val promptPrinter = remember { mutableStateOf("") }
+            val logcatPrinter = remember { mutableStateOf("Logcat ...\n") }
+            val logcatScrollState = rememberScrollState()
 
-                ">"._logline()
-                Solution().levelOrder(parseTree("3,9,20,null,null,15,7"))._log()
+            val defaultSerializedTree = "1,2,3"
+            val serializeTree = remember { mutableStateOf(TextFieldValue(defaultSerializedTree)) }
+            val history = Stack<String>()
+            history.push(defaultSerializedTree)
+            promptPrinter.value = parseTree(defaultSerializedTree)._pretty()
 
-//                Solution().preorderTraversal(treeNodeInt)._log()
-//                "*"._logline()
-//                Solution().preorderTraversalImproved(treeNodeInt)._log()
+            Card(elevation = 8.dp) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        TextField(
+                                modifier = Modifier.weight(1f),
+                                value = serializeTree.value,
+                                onValueChange = {
+                                    if (history.peek() != it.text) {
+                                        history.push(it.text)
+                                        promptPrinter.value = parseTree(it.text)._pretty()
+                                    }
 
-//                Solution().inorderTraversal(treeNodeInt)._log()
-//                "*"._logline()
-//                Solution().inorderTraversalImproved(treeNodeInt)._log()
-//
+                                    serializeTree.value = it
+                                },
+                                maxLines = 1,
+                                label = { Text("Serialize Tree") },
+                        )
 
-//                Solution().postorderTraversal(treeNodeInt)._log()
-//                "*"._logline()
-//                Solution().postorderTraversalImproved(treeNodeInt)._log()
+                        Spacer()
+
+                        IconButton(
+                                modifier = Modifier.height(55.dp).background(color = MaterialTheme.colors.onSurface.copy(alpha = ContainerAlpha)),
+                                onClick = {
+                                    serializeTree.value = if (history.isNotEmpty()) {
+                                        TextFieldValue(history.pop())
+                                    } else {
+                                        history.push(defaultSerializedTree)
+                                        TextFieldValue(defaultSerializedTree)
+                                    }
+                                }
+                        ) {
+                            Icon(Icons.Filled.Replay)
+                        }
+                    }
+
+                    Spacer()
+
+                    ScrollableRow(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+
+                        Button(onClick = {
+                            val bt = parseTree(serializeTree.value.text)
+                            val result = BinaryTree.levelOrder(bt)
+
+                            promptPrinter.value = bt._pretty()
+                            logcatPrinter.value += result._output()
+                            logcatScrollState.smoothScrollBy(100F)
+
+                            "-"._logline()
+                            result._log()
+                        }) { Text("Level Order") }
+
+                        Spacer()
+
+                        Button(onClick = {
+                            val bt = parseTree(serializeTree.value.text)
+                            promptPrinter.value = bt._pretty()
+
+                            val result = BinaryTree.preorderTraversal(bt)
+                            logcatPrinter.value += result._output()
+                            logcatScrollState.smoothScrollBy(100F)
+
+                            "-"._logline()
+                            result._log()
+                        }) { Text("Preorder Traversal") }
+
+                        Spacer()
+
+                        Button(onClick = {
+                            val bt = parseTree(serializeTree.value.text)
+                            promptPrinter.value = bt._pretty()
+
+                            val result = BinaryTree.inorderTraversal(bt)
+                            logcatPrinter.value += result._output()
+                            logcatScrollState.smoothScrollBy(100F)
+
+                            "-"._logline()
+                            result._log()
+                        }) { Text("Inorder Traversal") }
+
+                        Spacer()
+
+                        Button(onClick = {
+                            val bt = parseTree(serializeTree.value.text)
+                            promptPrinter.value = bt._pretty()
+
+                            val result = BinaryTree.postorderTraversal(bt)
+                            logcatPrinter.value += result._output()
+                            logcatScrollState.smoothScrollBy(100F)
+
+                            "-"._logline()
+                            result._log()
+                        }) { Text("Postorder Traversal") }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+
+            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+
+                val modifier = Modifier.fillMaxWidth()
+                        .weight(1f)
+                        .background(color = Color.DarkGray)
+                        .border(border = BorderStroke(1.dp, Color.White))
+
+                ScrollableRow(modifier = modifier) {
+                    ScrollableColumn(modifier = Modifier.padding(5.dp)) {
+                        Text(text = promptPrinter.value, fontFamily = FontFamily.Monospace)
+                    }
+                }
+
+                ScrollableRow(modifier = modifier) {
+                    ScrollableColumn(modifier = Modifier.padding(5.dp), scrollState = logcatScrollState) {
+                        Text(text = logcatPrinter.value, fontFamily = FontFamily.Monospace)
+                    }
+                }
             }
         }
     }
 }
 
-class Solution {
-
-    fun levelOrder(root: TreeNode?): List<List<Int>>{
-        val answer: ArrayList<List<Int>> = ArrayList()
-        var currentNode: TreeNode?
-        val queue: Queue<TreeNode> = LinkedList()
-
-        root?.let { queue.offer(it) }
-        while(queue.isNotEmpty()) {
-            val size = queue.size
-            val listLevel = LinkedList<Int>()
-
-            for (i in 0 until size) {
-                currentNode = queue.poll()
-                listLevel.add(currentNode.`val`)
-                currentNode.left?.let { queue.offer(it) }
-                currentNode.right?.let { queue.offer(it) }
-            }
-
-            answer.add(listLevel)
-        }
-
-        return answer
-    }
-
-    fun inorderTraversal(root: TreeNode?): List<Int> {
-        val orderedList = ArrayList<Int>()
-        var currentNode: TreeNode? = root
-        val stack = Stack<TreeNode>()
-
-        currentNode?.let { stack.push(it) }
-        while(stack.isNotEmpty() && currentNode != null){
-
-            if(currentNode.left != null){
-                val tmpCurrent = currentNode
-                currentNode = currentNode.left
-
-                tmpCurrent.left = null
-                stack.push(tmpCurrent)
-            } else {
-                orderedList.add(currentNode!!.`val`)
-
-                if(currentNode.right != null){
-                    currentNode = currentNode.right
-                } else {
-                    currentNode = if(stack.isNotEmpty()) {
-                        stack.pop()
-                    } else {
-                        null
-                    }
-                }
-            }
-        }
-
-        return orderedList.toList()
-    }
-
-    fun inorderTraversalImproved(root: TreeNode?): List<Int> {
-        val orderedList = ArrayList<Int>()
-        var currentNode: TreeNode?
-        val stack = Stack<TreeNode>()
-
-        root?.let { stack.push(it) }
-        while(stack.isNotEmpty()) {
-            currentNode = stack.pop()
-
-            currentNode?.right?.let { stack.push(it) }
-            currentNode?.let { stack.push(TreeNode(it.`val`)) }
-            currentNode?.left?.let { stack.push(it) }
-
-            if(currentNode.left == null && currentNode.right == null) {
-                currentNode = stack.pop()
-                orderedList.add(currentNode.`val`)
-            }
-        }
-
-        return orderedList
-    }
-
-    fun preorderTraversalImproved(root: TreeNode?): List<Int> {
-        val orderedList = mutableListOf<Int>()
-        var currentNode: TreeNode?
-        val stack = Stack<TreeNode>()
-
-        root?.let { stack.push(it) }
-        while(stack.isNotEmpty()){
-            currentNode = stack.pop()
-            orderedList.add(currentNode.`val`)
-
-            // is filled from the right to the left because here LIFO is apply
-            currentNode.right?.let { stack.push(it) }
-            currentNode.left?.let { stack.push(it) }
-        }
-
-        return orderedList
-    }
-
-    fun preorderTraversal(root: TreeNode?): List<Int> {
-        val orderedList = mutableListOf<Int>()
-        var currentNode: TreeNode? = root
-        val stack = Stack<TreeNode>()
-
-        while(currentNode != null){
-            orderedList.add(currentNode.`val`)
-
-            when {
-                currentNode.left != null -> {
-                    currentNode.right?.let { stack.push(it) }
-                    currentNode = currentNode.left
-                }
-                currentNode.right != null -> {
-                    currentNode = currentNode.right
-                }
-                else -> {
-                    currentNode = null
-                    if(stack.isNotEmpty()) {
-                        currentNode = stack.pop()
-                    }
-                }
-            }
-        }
-
-        return orderedList.toList()
-    }
-
-    fun postorderTraversal(root: TreeNode?): List<Int> {
-        val orderedList = ArrayList<Int>()
-        var currentNode = root
-        val stack = Stack<TreeNode>()
-
-        currentNode?.let { stack.push(it) }
-        while(stack.isNotEmpty() && currentNode != null){
-
-            when {
-                currentNode.left != null -> {
-                    val tmpCurrent = currentNode
-                    currentNode = currentNode.left
-
-                    tmpCurrent.left = null
-                    stack.push(tmpCurrent)
-                }
-                currentNode.right != null -> {
-                    val tmpCurrent = currentNode
-                    currentNode = currentNode.right
-
-                    tmpCurrent.right = null
-                    stack.push(tmpCurrent)
-                }
-                else -> {
-                    orderedList.add(currentNode.`val`)
-                    currentNode = if(stack.isNotEmpty()) stack.pop() else null
-                }
-            }
-        }
-
-        return orderedList
-    }
-
-    fun postorderTraversalImproved(root: TreeNode?): List<Int> {
-        val orderedList = ArrayList<Int>()
-        var currentNode: TreeNode?
-        val stack = Stack<TreeNode>()
-
-        root?.let { stack.push(it) }
-        while(stack.isNotEmpty()) {
-            currentNode = stack.pop()
-
-            currentNode?.let { stack.push(TreeNode(it.`val`)) }
-            currentNode?.right?.let { stack.push(it) }
-            currentNode?.left?.let { stack.push(it) }
-
-            if(currentNode.left == null && currentNode.right == null) {
-                currentNode = stack.pop()
-                orderedList.add(currentNode.`val`)
-            }
-        }
-
-        return orderedList
-    }
-}
+//@Preview(showBackground = false)
+//@Composable
+//private fun PreviewHomeScreen(){
+//    HomeScreen()
+//}
