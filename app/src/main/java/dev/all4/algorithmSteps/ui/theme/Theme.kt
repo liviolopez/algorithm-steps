@@ -1,16 +1,15 @@
 package dev.all4.algorithmSteps.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Typography
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-        primary = purple200,
+        background = Color.Black,
+        primary = blue200,
         primaryVariant = purple700,
         secondary = teal200
 )
@@ -35,7 +34,8 @@ fun AlgorithmStepsTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Co
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
-        LightColorPalette
+//        LightColorPalette
+        DarkColorPalette
     }
 
     MaterialTheme(

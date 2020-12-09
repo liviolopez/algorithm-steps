@@ -43,7 +43,7 @@ android {
         useIR = true
 
         // TEMPORARY
-        allWarningsAsErrors = true
+        //allWarningsAsErrors = true
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
         freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
         freeCompilerArgs += "-Xallow-jvm-ir-dependencies"
