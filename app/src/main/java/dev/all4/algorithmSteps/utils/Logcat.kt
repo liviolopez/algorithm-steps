@@ -88,7 +88,15 @@ fun _printTraceLog(TAG:String = "", onlyApp:Boolean = true){
     }
 }
 
+fun Any._output(line: String = "-"): String{
+    return line.repeat(10) + "\n" + getString(this) + "\n"
+}
+
 private fun formatLog(any: Any): List<String>{
+    return splitLogcat(getString(any))
+}
+
+private fun getString(any: Any): String {
     val logString: String
     logString = when(any){
         is String, Int, Double -> any.toString()
@@ -98,7 +106,7 @@ private fun formatLog(any: Any): List<String>{
         }
     }
 
-    return splitLogcat(logString)
+    return logString
 }
 
 private fun splitLogcat(logString: String): List<String> {
