@@ -1,3 +1,6 @@
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
+
 object Sdk {
     const val compile = 30
     const val target = 30
@@ -8,10 +11,20 @@ object Sdk {
 }
 
 object Dep {
+    fun Project.addDependencies(configName: String = "implementation") {
+        dependencies {
+            allLibs().forEach { (type, lib) -> if(type == "impl") add(configName, lib) else kapt(lib) }
+
+            add("testImplementation", Test.junit)
+            add("androidTestImplementation", Test.extJunit)
+            add("androidTestImplementation", Test.espressoCore)
+        }
+    }
+
     private val libs = mutableMapOf<String, MutableMap<String, MutableList<String>>>()
     fun plugin(group:String):String = (libs[group] ?: error(""))[plugin]!!.first()
 
-    fun allLibs(excludeGroup: List<String> = emptyList()): MutableList<Pair<String, String>> {
+    private fun allLibs(excludeGroup: List<String> = emptyList()): MutableList<Pair<String, String>> {
         val allLibs = mutableListOf<Pair<String, String>>()
 
         libs.filter { !excludeGroup.contains(it.key) }.forEach { d ->
@@ -43,7 +56,7 @@ object Dep {
             "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin}")
         )
 
-        val gradle = "7.0.0-alpha02"
+        val gradle = "7.0.0-alpha03"
         libs["Gradle"] = hashMapOf(
             plugin to mutableListOf(
             "com.android.tools.build:gradle:${gradle}")

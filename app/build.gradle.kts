@@ -1,3 +1,5 @@
+import Dep.addDependencies
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -61,11 +63,5 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    Dep.allLibs().forEach { (type, lib) -> if(type == "impl") implementation(lib) else kapt(lib) }
-
-    // ➡️ Test
-    testImplementation(Dep.Test.junit)
-    androidTestImplementation(Dep.Test.extJunit)
-    androidTestImplementation(Dep.Test.espressoCore)
-    // ⬅️
+    addDependencies()
 }
